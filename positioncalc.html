@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Position Size Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Reset -->
+  <style>
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, font, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      outline: 0;
+      font-weight: inherit;
+      font-style: inherit;
+      font-size: 100%;
+      font-family: inherit;
+      vertical-align: baseline;
+    }
+    /* remember to define focus styles! */
+    :focus {
+      outline: 0;
+    }
+    body {
+      line-height: 1;
+      color: black;
+      background: white;
+    }
+    ol, ul {
+      list-style: none;
+    }
+    /* tables still need 'cellspacing="0"' in the markup */
+    table {
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    caption, th, td {
+      text-align: left;
+      font-weight: normal;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+      content: "";
+    }
+    blockquote, q {
+      quotes: "" "";
+    }
+  </style>
+
+  <!-- Layout -->
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: sans-serif;
+    }
+    html {
+      margin: 0.2em 0.6em;
+    }
+    h1 {
+      font-size: 26px;
+      margin-top: 0.5em;
+      margin-bottom: 0.4em;
+    }
+
+    input {
+      width: 200px;
+      height: 34px;
+      line-height: 34px;
+      box-sizing: border-box;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      padding: 0px 8px;
+    }
+
+    input:disabled, input:read-only {
+      background: #f8f8f8;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 1em;
+    }
+
+    p {
+      margin-bottom: 1.3em;
+      line-height: 1.3em;
+    }
+
+    hr {
+      margin-bottom: 0.6em;
+      color: #fff;
+    }
+
+
+    .col {
+      float: left;
+    }
+    .row {
+      display: table;
+      clear: both;
+    }
+    .col-label {
+      vertical-align: middle;
+      width: 200px;
+      padding: 10px 0;
+    }
+    .clear {
+      clear: both;
+    }
+    .subtitle {
+      font-size: 60%;
+    }
+  </style>
+
+  <!-- Slider -->
+  <style>
+    .sliderwidget {
+      float: left;
+      width: 200px;
+      height: 21px;
+    }
+    .slidecontainer {
+      position: relative;
+      float: right;
+      left: -0.5em;
+      bottom: 1.58em;
+      width: 9.5em;
+    }
+
+    .slideoutput {
+      float: left;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      border: 0.1em solid #bbb;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 1.5em;
+      background: #f8f8f8;
+    }
+
+    .slider::-moz-range-thumb {
+      border: 0.1em solid #bbb;
+      width: 1.35em;
+      height: 1.35em;
+      border-radius: 1.35em;
+      background: #f8f8f8;
+    }
+
+    input[type=range]::-moz-range-track {
+      background: white;
+    }
+  </style>
+
+  <!-- Info button -->
+  <style>
+    .btn-info-container {
+      float: left;
+      margin-top: 0.4em;
+      margin-bottom: 0.5em;
+      margin-left: 3em;
+    }
+    .info-btn {
+      font-size: 180%;
+      font-weight: bold;
+      color: white;
+      background-color: #6a94d5;
+      cursor: pointer;
+      border: 2px solid #6a94d5;
+      border-radius: 0.7em;
+      width: 1.4em;
+      height: 1.4em;
+
+    }
+    .info-btn:hover {
+      color: #6a94d5;
+      background-color: white;
+    }
+  </style>
+
+  <!-- Modal -->
+  <style>
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0,0,0);
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Header -->
+<div>
+  <div style="float: left;">
+    <h1>Position Size Calculator</h1>
+  </div>
+  <div class="btn-info-container">
+    <button id="infoBtn" class="info-btn">?</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="col clear">
+  <form oninput="levRangeOutput.value=levRange.value">
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Entry Price</label>
+      </div>
+      <div class="col">
+        <input type="number" id="price" oninput="calcPosSize()" step=0.00000001 autofocus>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Stop Loss</label>
+      </div>
+      <div class="col">
+        <input type="number" id="stop" name="stop" oninput="calcPosSize()" step=0.00000001 min=0>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Capital at risk</label>
+      </div>
+      <div class="col">
+        <input type="number" id="loss" name="loss" oninput="calcPosSize()" step=0.01 min=0.01>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Position Size</label>
+      </div>
+      <div class="col">
+        <input type="text" readonly id="posSize" name="posSize" value="0">
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Distance to Stop</label>
+      </div>
+      <div class="col">
+        <input type="text" readonly id="disStop" value="0">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Distance % to Stop</label>
+      </div>
+      <div class="col">
+        <input type="text" readonly id="disStopPerc" value="0" />
+      </div>
+    </div>
+
+    <div class="row" style="display: none">
+      <div class="col col-label">
+        <label class="text-nowrap">R/R 1:2.2 Target</label>
+      </div>
+      <div class="col">
+        <input type="text" readonly id="rr_target" value="0">
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap">Leverage</label>
+      </div>
+
+      <div class="col sliderwidget">
+        <div class="slideoutput">
+          <input type="text" readonly name="levRangeOutput" id="levRangeOutput" class="col" value="1">
+
+            <div class="slidecontainer">
+              <input type="range" class="slider" id="levRange" name="levRange" value="1" min="1" max="10"
+                  oninput="
+                  // document.getElementById('leverage').value = this.value;
+                  margin.value = (parseFloat(posSize.value)/this.value).toPrecision(5);">
+            </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col col-label">
+        <label class="text-nowrap" for="margin">Margin</label>
+      </div>
+      <div class="col">
+        <input type="text" readonly id="margin" name="margin" value="1">
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+
+<!-- Info Modal -->
+<div id="infoModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Position Size Calculator <span class="subtitle">by <a href="https://github.com/josepgl/position-size-calculator">josepgl</a></span></h2>
+
+    <p>Position size calculator self-contained in a single html file for portability and simplicity.</p>
+
+    <p>This html file can be downloaded and used locally. You are encouraged to make any change to suit your needs.</p>
+
+    <hr>
+    <p>MIT License</p>
+
+    <p>Copyright (c) 2020 josepgl</p>
+
+    <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+    <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+    <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+  </div>
+
+</div>
+
+<script>
+var modal = document.getElementById("infoModal");
+var btn = document.getElementById("infoBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+
+
+<script>
+function getInputValue(id)
+{
+    var input1 = document.getElementById(id)
+    //Assume form with id="theform"
+    var number = 0;
+    //If the textbox is not blank
+    if(input1.value != "")
+    {
+        number = parseFloat(input1.value);
+    }
+    return number;
+}
+
+function liquidationPrice(price, leverage, long) {
+  var mmr = 0.5;
+  var levmmr = leverage * mmr / 100
+  var levprice = leverage * price
+  var liqP;
+
+  if (long) {
+    liqP  = levprice/(leverage+1-(levmmr));
+  } else {
+    liqP = levprice/(leverage-1+(levmmr));
+  }
+
+  return liqP;
+}
+
+function calcPosSize()
+{
+  // Input
+  var price = getInputValue('price');
+  var loss = getInputValue('loss');
+  var stop = getInputValue('stop');
+
+  // distance and distance % to stop loss
+  var disStop = price - stop;
+
+  var rr_ratio = 2.2;
+  var rr_target = price + (rr_ratio * disStop);
+
+  var long = true;
+  if(disStop < 0) {
+    disStop = -disStop;
+    long = false;
+  }
+
+  // position size
+  var disStopPerc = disStop / price * 100;
+  var posSize = loss / (disStopPerc / 100);
+
+  // max leverage
+  var maxLev = 0;
+  var leverage = 100;
+  while (leverage > 0) {
+    var liqP = liquidationPrice(price, leverage, long);
+    if (long && liqP < stop) {
+      maxLev = leverage;
+      console.log('Liquidation price: ' + liqP);
+      break;
+    }
+    if (!long && liqP > stop) {
+      maxLev = leverage;
+      console.log('Liquidation price: ' + liqP);
+      break;
+    }
+
+    leverage -= 1;
+  }
+
+  // Display the result
+  document.getElementById('posSize').value     = posSize.toFixed(2);
+  document.getElementById('rr_target').value   = rr_target.toFixed(3);
+  document.getElementById('disStop').value     = disStop.toFixed(2);
+  document.getElementById('disStopPerc').value = disStopPerc.toFixed(2);
+  levRange.max = maxLev;
+  // maxLevLabel.innerHTML = maxLev;
+  console.log('maxLev', maxLev);
+  console.log('levRange.max', levRange.max);
+  // console.log('maxLevLabel.innerHTML', maxLevLabel.innerHTML);
+
+  console.log('levRange.value > maxLev', levRange.value, maxLev);
+  console.log('levRange.value > maxLev', levRange.value > maxLev);
+
+  if (levRange.value > maxLev) {
+    levRange.value = maxLev;
+  }
+
+  // document.getElementById('leverage').value = levRange.value;
+  // console.log(document.getElementById('leverage').value);
+}
+
+function precise(x) {
+  return Number.parseFloat(x).toPrecision(4);
+}
+</script>
+
+</body>
+</html>
